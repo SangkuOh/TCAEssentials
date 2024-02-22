@@ -12,18 +12,25 @@ struct ContactsView: View {
   @Bindable var store: StoreOf<ContactsFeature>
   
   var body: some View {
-    NavigationStack {
+    NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
       List {
         ForEach(store.contacts) { contact in
-          HStack {
-            Text(contact.name)
-            Spacer()
-            Button {
-              store.send(.deleteButtonTapped(id: contact.id))
-            } label: {
-              Image(systemName: "trash")
-                .foregroundColor(.red)
+          Button {
+            store.send(.navigationButtonTapped(contact: contact))
+          } label: {
+            HStack {
+              Text(contact.name)
+              Spacer()
+              Button {
+                store.send(.deleteButtonTapped(id: contact.id))
+              } label: {
+                Image(systemName: "trash")
+                  .foregroundColor(.red)
+              }
             }
+          }
+          NavigationLink(state: ContactsFeature.Path.State.detail(ContactDetailFeature.State(contact: contact))) {
+            Text(contact.name)
           }
         }
       }
@@ -36,6 +43,11 @@ struct ContactsView: View {
             Image(systemName: "plus")
           }
         }
+      }
+    } destination: { store in
+      switch store.case {
+      case let .detail(store):
+        ContactDetailView(store: store)
       }
     }
     .sheet(

@@ -15,11 +15,14 @@ struct ContactsFeature {
   struct State: Equatable {
     var contacts: IdentifiedArrayOf<Contact> = []
     @Presents var destination: Destination.State?
+    var path = StackState<Path.State>()
   }
   enum Action {
     case addButtonTapped
     case deleteButtonTapped(id: Contact.ID)
     case destination(PresentationAction<Destination.Action>)
+    case path(StackAction<Path.State, Path.Action>)
+    case navigationButtonTapped(contact: Contact)
     enum Alert: Equatable {
       case confirmDeletion(id: Contact.ID)
     }
@@ -50,9 +53,24 @@ struct ContactsFeature {
       case let .deleteButtonTapped(id: id):
         state.destination = .alert(.deleteConfirmation(id: id))
         return .none
+        
+      case let .navigationButtonTapped(contact):
+        state.path.append(.detail(.init(contact: contact)))
+        return .none
+        
+      case let .path(.element(id: id, action: .detail(.delegate(.confirmDeletion)))):
+        guard let detailState = state.path[id: id]?.detail else {
+          return .none
+        }
+        state.contacts.remove(id: detailState.contact.id)
+        return .none
+        
+      case .path:
+        return .none
       }
     }
     .ifLet(\.$destination, action: \.destination)
+    .forEach(\.path, action: \.path)
   }
 }
 
@@ -61,6 +79,10 @@ extension ContactsFeature {
   enum Destination {
     case addContact(AddContactFeature)
     case alert(AlertState<ContactsFeature.Action.Alert>)
+  }
+  @Reducer(state: .equatable)
+  enum Path {
+    case detail(ContactDetailFeature)
   }
 }
 

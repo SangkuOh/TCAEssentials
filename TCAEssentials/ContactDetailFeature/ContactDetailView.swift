@@ -9,13 +9,16 @@ import SwiftUI
 import ComposableArchitecture
 
 struct ContactDetailView: View {
-  let store: StoreOf<ContacDetailFeature>
+  @Bindable var store: StoreOf<ContactDetailFeature>
   
   var body: some View {
     Form {
-      
+      Button("Delete") {
+        store.send(.deleteButtonTapped)
+      }
     }
     .navigationTitle(store.contact.name)
+    .alert($store.scope(state: \.alert, action: \.alert))
   }
 }
 
@@ -23,9 +26,9 @@ struct ContactDetailView: View {
   NavigationStack {
     ContactDetailView(
       store: .init(
-      initialState: ContacDetailFeature.State(
+      initialState: ContactDetailFeature.State(
         contact: .init(id: .init(), name: "Blob Jr."))) {
-          ContacDetailFeature()
+          ContactDetailFeature()
         }
     )
   }
