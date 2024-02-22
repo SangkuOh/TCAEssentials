@@ -29,7 +29,7 @@ struct ContactsView: View {
               }
             }
           }
-          NavigationLink(state: ContactsFeature.Path.State.detail(ContactDetailFeature.State(contact: contact))) {
+          NavigationLink(state: ContactsFeature.Path.State.detail(.init(contact: contact))) {
             Text(contact.name)
           }
         }

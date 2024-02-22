@@ -13,7 +13,7 @@ struct AddContactView: View {
   
   var body: some View {
     Form {
-      TextField("Name", text: $store.contact.name.sending(\.setName))
+      TextField("Name", text: $store.contact.name)
       Button("Save") {
         store.send(.saveButtonTapped)
       }

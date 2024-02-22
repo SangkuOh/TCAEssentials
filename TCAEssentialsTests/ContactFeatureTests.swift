@@ -27,7 +27,8 @@ final class ContactsFeatureTests: XCTestCase {
         )
       )
     }
-    await store.send(.destination(.presented(.addContact(.setName("Blob Jr."))))) {
+    
+    await store.send(.destination(.presented(.addContact(.binding(.set(\.contact.name, "Blob Jr.")))))) {
       $0.$destination[case: \.addContact]?.contact.name = "Blob Jr."
     }
     await store.send(.destination(.presented(.addContact(.saveButtonTapped))))
@@ -53,7 +54,7 @@ final class ContactsFeatureTests: XCTestCase {
     store.exhaustivity = .off
     
     await store.send(.addButtonTapped)
-    await store.send(.destination(.presented(.addContact(.setName("Blob Jr.")))))
+    await store.send(.destination(.presented(.addContact(.binding(.set(\.contact.name, "Blob Jr."))))))
     await store.send(.destination(.presented(.addContact(.saveButtonTapped))))
     await store.skipReceivedActions()
     store.assert {

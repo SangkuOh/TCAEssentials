@@ -14,10 +14,10 @@ struct AddContactFeature {
   struct State: Equatable {
     var contact: Contact
   }
-  enum Action {
+  enum Action: BindableAction {
+    case binding(BindingAction<State>)
     case cancelButtonTapped
     case saveButtonTapped
-    case setName(String)
     case delegate(Delegate)
     
     @CasePathable
@@ -28,8 +28,12 @@ struct AddContactFeature {
   }
   @Dependency(\.dismiss) var dismiss
   var body: some ReducerOf<Self> {
+    BindingReducer()
     Reduce { state, action in
       switch action {
+      case .binding:
+        return .none
+        
       case .cancelButtonTapped:
         return .run { _ in await dismiss() }
         
@@ -40,10 +44,6 @@ struct AddContactFeature {
         }
         
       case .delegate:
-        return .none
-        
-      case .setName(let name):
-        state.contact.name = name
         return .none
       }
     }
