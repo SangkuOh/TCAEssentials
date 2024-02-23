@@ -10,14 +10,17 @@ import SwiftUI
 
 struct AddContactView: View {
   @Bindable var store: StoreOf<AddContactFeature>
+  @FocusState var focusedField: AddContactFeature.State.Field?
   
   var body: some View {
     Form {
       TextField("Name", text: $store.contact.name)
+        .focused($focusedField, equals: .name)
       Button("Save") {
         store.send(.saveButtonTapped)
       }
     }
+    .bind($store.focusedField, to: $focusedField)
     .toolbar {
       Button("Cancel") {
         store.send(.cancelButtonTapped)

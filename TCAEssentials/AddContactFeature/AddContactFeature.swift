@@ -12,7 +12,12 @@ import Foundation
 struct AddContactFeature {
   @ObservableState
   struct State: Equatable {
+    var focusedField: Field? = .name
     var contact: Contact
+    
+    enum Field {
+      case name
+    }
   }
   enum Action: BindableAction {
     case binding(BindingAction<State>)
