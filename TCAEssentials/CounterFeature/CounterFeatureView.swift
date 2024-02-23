@@ -49,6 +49,10 @@ struct CounterView: View {
       .padding()
       .background(.black.opacity(0.1))
       .cornerRadius(10)
+      Button("Cancel") {
+        store.send(.cancelButtonTapped)
+      }
+      .buttonStyle(.borderedProminent)
       
       if store.isLoading {
         ProgressView()

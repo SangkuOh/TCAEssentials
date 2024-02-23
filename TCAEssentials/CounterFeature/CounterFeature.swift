@@ -25,9 +25,13 @@ struct CounterFeature {
     case factResponse(String)
     case toggleTimerButtonTapped
     case timerTick
+    case cancelButtonTapped
   }
   
-  enum CancelID { case timer }
+  enum CancelID {
+    case timer
+    case fetch
+  }
   
   @Dependency(\.continuousClock) var clock
   @Dependency(\.numberFact) var numberFact
@@ -45,14 +49,20 @@ struct CounterFeature {
         state.fact = nil
         return .none
         
+      case .cancelButtonTapped:
+        state.isLoading = false
+        return .cancel(id: CancelID.fetch)
+        
       case .factButtonTapped:
         state.fact = nil
         state.isLoading = true
         
         return .run { [count = state.count] send in
+          try await Task.sleep(for: .seconds(3))
           let fact = try await numberFact.fetch(count)
           await send(.factResponse(fact))
         }
+        .cancellable(id: CancelID.fetch)
         
       case let .factResponse(fact):
         state.fact = fact

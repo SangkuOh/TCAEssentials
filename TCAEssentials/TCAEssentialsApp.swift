@@ -10,14 +10,19 @@ import SwiftUI
 
 @main
 struct TCAEssentialsApp: App {
-  @State var store: Store = .init(initialState: ContactsFeature.State()) {
-    ContactsFeature()
+  @State var store: Store = .init(initialState: CounterFeature.State()) {
+    CounterFeature()
       ._printChanges()
   }
+//  @State var store: Store = .init(initialState: ContactsFeature.State()) {
+//    ContactsFeature()
+//      ._printChanges()
+//  }
   
   var body: some Scene {
     WindowGroup {
-      ContactsView(store: store)
+      CounterView(store: store)
+//      ContactsView(store: store)
     }
   }
 }
