@@ -10,9 +10,9 @@ import SwiftUI
 
 struct CounterView: View {
   let store: StoreOf<CounterFeature>
-  
+  @State var isLoading = false
   var body: some View {
-    VStack {
+    List {
       Text("\(store.count)")
         .font(.largeTitle)
         .padding()
@@ -62,6 +62,11 @@ struct CounterView: View {
           .multilineTextAlignment(.center)
           .padding()
       }
+    }
+    .refreshable {
+      isLoading = true
+      defer { isLoading = false }
+      await store.send(.factButtonTapped).finish()
     }
   }
 }

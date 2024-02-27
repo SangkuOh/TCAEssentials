@@ -60,7 +60,10 @@ struct CounterFeature {
         return .run { [count = state.count] send in
           try await Task.sleep(for: .seconds(3))
           let fact = try await numberFact.fetch(count)
-          await send(.factResponse(fact))
+          await send(
+            .factResponse(fact),
+            animation: .default
+          )
         }
         .cancellable(id: CancelID.fetch)
         
